@@ -11,6 +11,11 @@ selainta lataamaan sivun uudelleen
 end note
 palvelin-->selain: HTML-vastaus 302 (Found), location: /notes
 
+note over palvelin,selain:
+loppuosa noudattaa normaalia sivun latausta
+mikä on kopioitu tehtävän 0.4 tehtävänannosta
+end note
+
 selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
 palvelin-->selain: HTML-koodi
 
