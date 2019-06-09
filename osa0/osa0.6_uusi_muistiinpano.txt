@@ -1,0 +1,18 @@
+note over selain:
+käyttäjä kirjoittaa uuden muistiinpanon
+ja painaa save-nappia jolloin selain
+aloittaa js-koodin suorittamisen joka
+lähettää uuden muistiinpanon palvelimelle.
+end note
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+note over palvelin:
+uuden muistiinpanon sisältö "Request Payload":ssa json tietueena
+palvelin tallettaa ja kuitaa json viestillä
+end note
+palvelin-->selain: [{"message":"note created"}]
+
+note over selain:
+selain jatkaa js-koodin suorittamista
+ja päivittää uuden lisätyn muistiinpanon selaimelle
+end note
