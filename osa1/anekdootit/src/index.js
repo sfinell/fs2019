@@ -41,9 +41,33 @@ const Votes = (props) => {
   )
 }
 
+const Anecdote = (props) => {
+  return (
+    <div>
+      <h1>{props.header}</h1>
+      selected: {props.selected} / {props.anecdotes.length} <br/>
+      <Votes count={6} votes={props.votes} />
+      {props.selected}: {props.anecdotes[props.selected]} <br/>
+      has {props.votes[props.selected]} votes
+    </div>
+  )
+}
+
 const createVotes = (count) => {
   console.log("createVotes():", count)
   return Array.apply(null, new Array(count)).map(Number.prototype.valueOf,0)
+}
+
+const getMostVoted = (votes) => {
+  var i;
+  var mostVoted = 0;
+  for (i = 0; i < votes.length; i++) {
+    if (votes[i] > votes[mostVoted]) {
+      mostVoted = i;
+    }
+  }
+  console.log("getMostVoted():", mostVoted)
+  return mostVoted
 }
 
 const App = (props) => {
@@ -76,20 +100,23 @@ const App = (props) => {
     console.log("voted: ", selected, ":", copy[selected])
   }
 
-  const numOfAnecdotes = props.anecdotes.length
-  const nextAnecdote = selected
+  const mostVoted = getMostVoted(votes)
 
   return (
     <div>
+        <h1>Anecdote of the day</h1>
+        <Anecdote
+          header="Anecdote of the day"
+          anecdotes={props.anecdotes}
+          votes={votes}
+          selected={selected} />
         <button onClick={handleVoteAnecdote}>vote</button>
         <button onClick={handleNextAnecdote}>next anecdote</button>
-        <br/>
-        selected: {selected} <br/>
-        num of: {numOfAnecdotes} <br/>
-        next: {nextAnecdote} <br/>
-        <Votes count={6} votes={votes} />
-        {selected}: {props.anecdotes[selected]} <br/>
-        has {votes[selected]} votes
+        <Anecdote
+          header="Anecdote with most votes"
+          anecdotes={props.anecdotes}
+          votes={votes}
+          selected={mostVoted} />
     </div>
   )
 }
