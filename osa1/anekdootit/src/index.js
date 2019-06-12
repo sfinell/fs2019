@@ -1,12 +1,58 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
+const getNextAnecdote = (anecdotes) => {
+  const result = Math.floor(Math.random() * anecdotes.length)
+  console.log("randomize...[ 0,", anecdotes.length, "[:", result)
+  return result
+}
+
+const getNextAnecdoteText = (anecdotes, selected) => {
+  if (selected < 0) {
+    console.log("first time:", selected)
+    selected = getNextAnecdote(anecdotes)
+  }
+  console.log("now index:", selected)
+  return anecdotes[selected]
+}
+
+const MyState = (props) => {
+  console.log("MyState - count:", props.count)
+  return (
+    <p> MyState: {props.count} </p>
+  )
+}
+
 const App = (props) => {
-  const [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState(-1)
+  console.log("A: ", selected)
+
+  if (selected < 0) {
+    setSelected(getNextAnecdote(props.anecdotes))
+    console.log("B: ", selected)
+    return
+  }
+  console.log("C: ", selected)
+
+const handleNextAnecdote = () => {
+    const prev = selected
+    const next = getNextAnecdote(props.anecdotes)
+///    setSelected(getNextAnecdote(props.anecdotes))
+    setSelected(next)
+    console.log("prev->next: ", prev, "->", next)
+  }
+
+  const numOfAnecdotes = props.anecdotes.length
+  const nextAnecdote = selected
 
   return (
     <div>
-      {props.anecdotes[selected]}
+        <button onClick={handleNextAnecdote}>next anecdote</button>
+        <br/>
+        selected: {selected} <br/>
+        num of: {numOfAnecdotes} <br/>
+        next: {nextAnecdote} <br/>
+        {selected}: {props.anecdotes[selected]}
     </div>
   )
 }
