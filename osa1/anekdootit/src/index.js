@@ -5,7 +5,6 @@ const getNextAnecdote = (count, prev) => {
   let result = prev
   while (result === prev) {
     result = Math.floor(Math.random() * count)
-//    console.log("randomize...[ 0,", count, "[:", result)
   }
   return result
 }
@@ -21,7 +20,6 @@ const Anecdote = (props) => {
 }
 
 const createVotes = (count) => {
-//  console.log("createVotes():", count)
   return Array.apply(null, new Array(count)).map(Number.prototype.valueOf,0)
 }
 
@@ -33,7 +31,6 @@ const getMostVoted = (votes) => {
       mostVoted = i;
     }
   }
-//  console.log("getMostVoted():", mostVoted)
   return mostVoted
 }
 
@@ -41,28 +38,21 @@ const App = (props) => {
   const [selected, setSelected] = useState(-1)
   const [votes, setVotes] = useState()
   const count = props.anecdotes.length
-//  console.log("A: ", selected)
-//  console.log("count:", count, "votes: ", votes)
 
   if (selected < 0) {
     setSelected(getNextAnecdote(count, selected))
     setVotes(createVotes(props.anecdotes.length))
-//    console.log("B: ", selected)
     return
   }
-//  console.log("C: ", selected)
 
   const handleNextAnecdote = () => {
-    const next = getNextAnecdote(count, selected)
-//    console.log("prev->next: ", selected, "->", next)
-    setSelected(next)
+    setSelected(getNextAnecdote(count, selected))
   }
 
   const handleVoteAnecdote = () => {
     const copy = [...votes]
     copy[selected] += 1
     setVotes(copy)
-//    console.log("voted: ", selected, ":", copy[selected])
   }
 
   const mostVoted = getMostVoted(votes)
