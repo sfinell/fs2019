@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Course from './components/Course'
+// osa2.5 "Course omaksi moduliksi" tuli tehtyä jo aluksi
 
 const App = () => {
   const courses = [
