@@ -7,6 +7,7 @@ const App = () => {
   ]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
+  const [ filter, setFilter ] = useState('')
 
   const addName = (event) => {
     event.preventDefault()
@@ -37,9 +38,22 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const handleFilterChange = (event) => {
+    console.log(event.target.value)
+    setFilter(event.target.value)
+  }
+
+  const re = new RegExp(filter, "i");
+  const filteredPersons = () => persons.filter(e => re.test(e.name))
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>filter shown with <input
+        value={filter}
+        onChange={handleFilterChange}/>
+      </div>
+      <h2>add a new</h2>
       <form onSubmit={addName}>
         <div>
           name: <input
@@ -56,9 +70,8 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(person =>
+      {filteredPersons().map(person =>
         <div key={person.name}>{person.name} {person.number} </div>)}
-      <div>debug: {newName}</div>
     </div>
   )
 
