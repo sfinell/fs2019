@@ -14,10 +14,19 @@ const Filter = (props) => {
 }
 
 const CountryNames = (props) => {
+  const clicksauta = (event) => {
+    console.log("event:", event)
+    console.log("currentTarget:", event.currentTarget)
+    console.log("currentTarget.id:", event.currentTarget.id)
+    props.setFilter(event.currentTarget.id)
+  }
+
   return (
     <div>
       {props.countries.map(country =>
-        <div key={country.name}> {country.name}</div>)}
+        <div key={country.name}> {country.name}
+        <button  id={country.name} onClick={clicksauta}>show: {country.name}</button>
+        </div>)}
     </div>
   )
 }
@@ -47,7 +56,7 @@ const Countries = (props) => {
   }
   else if (count > 1) {
     return (
-      <CountryNames countries={props.countries} />
+      <CountryNames countries={props.countries} setFilter={props.setFilter}/>
     )
   }
   else if (count > 0) {
@@ -86,7 +95,7 @@ const App = () => {
   return (
     <div>
       <Filter value={filter} onChange={handleFilterChange} />
-      <Countries countries={filteredCountries()} />
+      <Countries countries={filteredCountries()}  setFilter={setFilter} />
     </div>
   )
 }
