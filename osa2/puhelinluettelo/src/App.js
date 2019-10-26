@@ -46,10 +46,7 @@ const Persons = (props) => {
 }
 
 const App = () => {
-  const [ persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '555-123' },
-    { name: 'Ada Lovelace', number: '555-124' }
-  ]) 
+  const [ persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
