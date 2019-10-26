@@ -32,7 +32,7 @@ const PersonForm = (props) => {
 
 const Person = (props) => {
   return (
-    <div>{props.name} {props.number} </div>
+    <div>{props.name} {props.number} <button type="button" id={props.id} name={props.name} onClick={props.onDelete}>delete</button></div>
   )
 }
 
@@ -40,7 +40,7 @@ const Persons = (props) => {
   return (
     <div>
       {props.persons.map(person =>
-        <Person key={person.name} name={person.name} number={person.number}/>)}
+        <Person key={person.name} id={person.id} name={person.name} number={person.number} onDelete={props.onDelete}/>)}
     </div>
   )
 }
@@ -98,6 +98,44 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const deleteName = (event) => {
+    event.persist()
+    event.preventDefault()
+//    console.log('delete clicked', event.target)
+    const id = Number(event.target.id)
+    const name = event.target.name
+    console.log('type id:', typeof(id))
+//    console.log('type p.id:', typeof(id))
+    console.log('delete id:', id)
+    const remove = window.confirm(`Delete ${name} ?`)
+    if (remove) {
+      personService.remove(id)
+        .then(removedPerson => {
+          console.log('deleted: ', removedPerson)
+          setPersons(persons.filter(p => p.id !== id))
+  //      setPersons(persons.concat(newPerson))
+      })
+    }
+
+//    console.log('event:', event)
+  // console.log('persons:', persons)
+    // if (persons.findIndex(e => e.name === newName) >= 0) {
+    //   alert(`${newName} is already added to phonebook`)
+    //   return
+    // }
+    // const nameObject = {
+    //   name: newName,
+    //   number: newNumber
+    // }
+    // // console.log("uus:", persons.concat(nameObject))
+    // personService.create(nameObject)
+    // .then(newPerson => {
+    //   setPersons(persons.concat(newPerson))
+    //   setNewName("")
+    //   setNewNumber("")
+    // })
+  }
+
   const re = new RegExp(filter, "i");
   const filteredPersons = () => persons.filter(e => re.test(e.name))
 
@@ -114,7 +152,7 @@ const App = () => {
         onNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={filteredPersons()} />
+      <Persons persons={filteredPersons()} onDelete={deleteName}/>
     </div>
   )
 }
