@@ -64,20 +64,29 @@ const App = () => {
   }, [])
   console.log('render', persons.length, 'persons')
 
+  const updateName = (old) => {
+    console.log('updateName, id:', old.id)
+    if (!window.confirm(`${newName} is already added to phonebook, replace ${old.id}?`)) return
+    const changedPerson = { ...old, number: newNumber }
+    personService.update(old.id, changedPerson).then(updatedPerson => {
+      setPersons(persons.map(p => p.id !== old.id ? p : updatedPerson))
+      setNewName("")
+      setNewNumber("")
+    })
+  }
+
   const addName = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
-  // console.log('event:', event)
-  // console.log('persons:', persons)
-    if (persons.findIndex(e => e.name === newName) >= 0) {
-      alert(`${newName} is already added to phonebook`)
+    const old = persons.find(e => e.name === newName)
+    if (old) {
+      updateName(old)
       return
     }
     const nameObject = {
       name: newName,
       number: newNumber
     }
-    // console.log("uus:", persons.concat(nameObject))
     personService.create(nameObject)
     .then(newPerson => {
       setPersons(persons.concat(newPerson))
@@ -99,41 +108,17 @@ const App = () => {
   }
 
   const deleteName = (event) => {
-    event.persist()
     event.preventDefault()
-//    console.log('delete clicked', event.target)
     const id = Number(event.target.id)
     const name = event.target.name
-    console.log('type id:', typeof(id))
-//    console.log('type p.id:', typeof(id))
-    console.log('delete id:', id)
+    console.log('delete id, name:', id, name)
     const remove = window.confirm(`Delete ${name} ?`)
     if (remove) {
       personService.remove(id)
         .then(removedPerson => {
-          console.log('deleted: ', removedPerson)
           setPersons(persons.filter(p => p.id !== id))
-  //      setPersons(persons.concat(newPerson))
       })
     }
-
-//    console.log('event:', event)
-  // console.log('persons:', persons)
-    // if (persons.findIndex(e => e.name === newName) >= 0) {
-    //   alert(`${newName} is already added to phonebook`)
-    //   return
-    // }
-    // const nameObject = {
-    //   name: newName,
-    //   number: newNumber
-    // }
-    // // console.log("uus:", persons.concat(nameObject))
-    // personService.create(nameObject)
-    // .then(newPerson => {
-    //   setPersons(persons.concat(newPerson))
-    //   setNewName("")
-    //   setNewNumber("")
-    // })
   }
 
   const re = new RegExp(filter, "i");
