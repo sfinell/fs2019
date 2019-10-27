@@ -45,14 +45,49 @@ const Persons = (props) => {
   )
 }
 
+const Notification = ({errorMsg, infoMsg}) => {
+  const errorStyle = {
+    color: 'red',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  const notificationStyle = {
+    ...errorStyle,
+    color : 'green'
+  }
+  if (errorMsg !== null) {
+    return (
+      <div style={errorStyle}>
+        {errorMsg}
+      </div>
+    )
+  }
+  if (infoMsg !== null) {
+    return (
+      <div style={notificationStyle}>
+        {infoMsg}
+      </div>
+    )
+  }
+  return null
+}
+
 const App = () => {
   const [ persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [ infoMessage, setInfoMessage ] = useState('testiii')
+  const [ errorMessage, setErrorMessage ] = useState('virheeiii')
 
   useEffect(() =>
   {
+    setTimeout(() => { setErrorMessage(null) }, 1000)
+    setTimeout(() => { setInfoMessage(null) }, 2000)
     console.log('effect')
     personService
       .getAll()
@@ -64,6 +99,16 @@ const App = () => {
   }, [])
   console.log('render', persons.length, 'persons')
 
+  const displayError = (msg) => {
+    setErrorMessage(msg)
+    setTimeout(() => { setErrorMessage(null) }, 5000)
+  }
+
+  const displayInfo = (msg) => {
+    setInfoMessage(msg)
+    setTimeout(() => { setInfoMessage(null) }, 5000)
+  }
+
   const updateName = (old) => {
     console.log('updateName, id:', old.id)
     if (!window.confirm(`${newName} is already added to phonebook, replace ${old.id}?`)) return
@@ -72,6 +117,7 @@ const App = () => {
       setPersons(persons.map(p => p.id !== old.id ? p : updatedPerson))
       setNewName("")
       setNewNumber("")
+      displayInfo(`Updated ${updatedPerson.name}`)
     })
   }
 
@@ -92,6 +138,7 @@ const App = () => {
       setPersons(persons.concat(newPerson))
       setNewName("")
       setNewNumber("")
+      displayInfo(`Added ${newPerson.name}`)
     })
   }
 
@@ -117,6 +164,7 @@ const App = () => {
       personService.remove(id)
         .then(removedPerson => {
           setPersons(persons.filter(p => p.id !== id))
+          displayInfo(`Deleted ${name}`)
       })
     }
   }
@@ -127,6 +175,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification errorMsg={errorMessage} infoMsg={infoMessage} />
       <Filter value={filter} onChange={handleFilterChange} />
       <h3>Add a new</h3>
       <PersonForm
