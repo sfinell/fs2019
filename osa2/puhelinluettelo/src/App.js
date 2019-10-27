@@ -81,13 +81,11 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
-  const [ infoMessage, setInfoMessage ] = useState('testiii')
-  const [ errorMessage, setErrorMessage ] = useState('virheeiii')
+  const [ infoMessage, setInfoMessage ] = useState(null)
+  const [ errorMessage, setErrorMessage ] = useState(null)
 
   useEffect(() =>
   {
-    setTimeout(() => { setErrorMessage(null) }, 1000)
-    setTimeout(() => { setInfoMessage(null) }, 2000)
     console.log('effect')
     personService
       .getAll()
@@ -101,25 +99,33 @@ const App = () => {
 
   const displayError = (msg) => {
     setErrorMessage(msg)
-    setTimeout(() => { setErrorMessage(null) }, 5000)
+    setTimeout(() => { setErrorMessage(null) }, 3000)
   }
 
   const displayInfo = (msg) => {
     setInfoMessage(msg)
-    setTimeout(() => { setInfoMessage(null) }, 5000)
+    setTimeout(() => { setInfoMessage(null) }, 2000)
   }
 
   const updateName = (old) => {
     console.log('updateName, id:', old.id)
-    if (!window.confirm(`${newName} is already added to phonebook, replace ${old.id}?`)) return
+    if (!window.confirm(`${newName} is already added to phonebook, replace?`)) return
     const changedPerson = { ...old, number: newNumber }
-    personService.update(old.id, changedPerson).then(updatedPerson => {
+    personService.update(old.id, changedPerson)
+    .then(updatedPerson => {
       setPersons(persons.map(p => p.id !== old.id ? p : updatedPerson))
       setNewName("")
       setNewNumber("")
       displayInfo(`Updated ${updatedPerson.name}`)
     })
-  }
+    .catch(error => {
+      console.log('error:', error)
+      setPersons(persons.filter(p => p.id !== old.id))
+      setNewName("")
+      setNewNumber("")
+      displayError(`Person '${old.name}' was already removed from server`)
+    })
+}
 
   const addName = (event) => {
     event.preventDefault()
@@ -162,11 +168,18 @@ const App = () => {
     const remove = window.confirm(`Delete ${name} ?`)
     if (remove) {
       personService.remove(id)
-        .then(removedPerson => {
-          setPersons(persons.filter(p => p.id !== id))
-          displayInfo(`Deleted ${name}`)
+      .then(removedPerson => {
+        setPersons(persons.filter(p => p.id !== id))
+        displayInfo(`Deleted ${name}`)
       })
-    }
+      .catch(error => {
+        console.log('error:', error)
+        setPersons(persons.filter(p => p.id !== id))
+        setNewName("")
+        setNewNumber("")
+        displayError(`Person '${name}' was already removed from server`)
+      })
+      }
   }
 
   const re = new RegExp(filter, "i");
