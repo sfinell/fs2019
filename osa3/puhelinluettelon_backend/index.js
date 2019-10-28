@@ -4,7 +4,11 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 
 app.use(bodyParser.json())
-app.use(morgan('tiny'))
+morgan.token('postjson', function (req, res) {
+    if (req.method !== 'POST') return ' ';
+    return JSON.stringify(req.body)
+  })
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postjson'))
 
 let persons = [
   {
@@ -74,7 +78,7 @@ const generateId = () => {
 
 app.post('/persons', (request, response) => {
   const body = request.body
-  console.log(body)
+//  console.log(body)
 
   if (!body.name) {
     return response.status(400).json({ 
