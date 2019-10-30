@@ -14,6 +14,8 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 app.use(cors())
 app.use(express.static('build'))
 
+// mongodb+srv://arcane-basin-46776:<password>@cluster0-a3ltf.mongodb.net/test?retryWrites=true&w=majority
+
 let persons = [
   {
     id: 1,
