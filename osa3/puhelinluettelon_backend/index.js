@@ -1,5 +1,7 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -13,8 +15,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 
 app.use(cors())
 app.use(express.static('build'))
-
-// mongodb+srv://arcane-basin-46776:<password>@cluster0-a3ltf.mongodb.net/test?retryWrites=true&w=majority
 
 let persons = [
   {
@@ -54,7 +54,9 @@ app.get('/info', (request, response) => {
   })
   
 app.get('/persons', (req, res) => {
-  res.json(persons)
+    Person.find({}).then(persons => {
+      res.json(persons.map(person => person.toJSON()))
+    });
 })
 
 app.get('/persons/:id', (request, response) => {
@@ -111,7 +113,8 @@ app.post('/persons', (request, response) => {
   response.json(person)
 })
 
-const PORT = process.env.PORT || 3001
+//const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
