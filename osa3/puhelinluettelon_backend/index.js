@@ -66,9 +66,14 @@ app.get('/persons/:id', (request, response) => {
 })
 
 app.delete('/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
-  response.status(204).end()
+    Person.findByIdAndDelete(request.params.id).then( person => {
+      console.log('delete person:', person)
+      response.status(204).end()
+    })
+    .catch(reason => {
+        console.log('delete failed:', reason)
+        response.status(204).end()
+    })
 })
 
 app.post('/persons', (request, response) => {
