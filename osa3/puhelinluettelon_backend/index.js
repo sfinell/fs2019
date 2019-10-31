@@ -60,13 +60,9 @@ app.get('/persons', (req, res) => {
 })
 
 app.get('/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  Person.findById(request.params.id).then(person => {
+    response.json(person.toJSON())
+  })
 })
 
 app.delete('/persons/:id', (request, response) => {
@@ -75,19 +71,8 @@ app.delete('/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-const generateId = () => {
-  let id = Math.floor(Math.random() * 10)
-  if (persons.find(person => person.id === id))
-  {
-    id = Math.max(...persons.map(person => person.id)) + 1
-  }
-  return id
-}
-
 app.post('/persons', (request, response) => {
   const body = request.body
-//  console.log(body)
-
   if (!body.name) {
     return response.status(400).json({ 
       error: 'name is missing' 
@@ -104,13 +89,14 @@ app.post('/persons', (request, response) => {
       })
     }
 
-  const person = {
-    id: generateId(),
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
-  persons = persons.concat(person)
-  response.json(person)
+  })
+  person.save().then(savedPerson => {
+    persons = persons.concat(person)
+    response.json(savedPerson.toJSON())
+  })
 })
 
 //const PORT = process.env.PORT || 3001
