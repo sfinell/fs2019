@@ -16,7 +16,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 app.use(cors())
 app.use(express.static('build'))
 
-let persons = [
+let personsX = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -53,30 +53,48 @@ app.get('/info', (request, response) => {
     response.send(`<div>Phonebook has info for ${entries} people</br></br>date ${date}</div>`)
   })
   
-app.get('/persons', (req, res) => {
+app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
       res.json(persons.map(person => person.toJSON()))
     });
 })
 
-app.get('/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, responsen, next) => {
   Person.findById(request.params.id).then(person => {
-    response.json(person.toJSON())
+    if (person) {
+      response.json(person.toJSON())
+    } else {
+      response.status(404).end()
+    }
   })
+  .catch(error => next(error))
 })
 
-app.delete('/persons/:id', (request, response) => {
-    Person.findByIdAndDelete(request.params.id).then( person => {
+app.delete('/api/persons/:id', (request, response, next) => {
+    console.log('starting delete  person:', request.params)
+    Person.findByIdAndRemove(request.params.id).then( person => {
       console.log('delete person:', person)
       response.status(204).end()
     })
-    .catch(reason => {
-        console.log('delete failed:', reason)
-        response.status(204).end()
-    })
+    .catch(error => next(error))
 })
 
-app.post('/persons', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson.toJSON())
+    })
+    .catch(error => next(error))
+})
+
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
   if (!body.name) {
     return response.status(400).json({ 
@@ -88,24 +106,48 @@ app.post('/persons', (request, response) => {
       error: 'number is missing' 
     })
   }
-  if (persons.find(person => person.name === body.name)) {
-    return response.status(400).json({ 
-        error: 'name must be unique' 
-      })
-    }
+//  if (persons.find(person => person.name === body.name)) {
+//    return response.status(400).json({ 
+//        error: 'name must be unique' 
+//      })
+//    }
 
   const person = new Person({
     name: body.name,
     number: body.number
   })
   person.save().then(savedPerson => {
-    persons = persons.concat(person)
     response.json(savedPerson.toJSON())
   })
+  .catch(error => next(error))
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+    console.log('virhekasittelija alkaa')
+    console.error(error.message)
+    console.log('----------------------')
+    console.log('error.name:', error.name)
+    console.log('error.kind:', error.kind)
+    console.log('error.code:', error.code)
+    console.log('----------------------')
+
+  if (error.name === 'CastError' && error.kind == 'ObjectId') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+app.use(errorHandler)
 
 //const PORT = process.env.PORT || 3001
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+    console.log('no')
+//  console.log(`Server running on port ${PORT}`)
+  console.log('miitaa')
 })

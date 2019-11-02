@@ -146,6 +146,10 @@ const App = () => {
       setNewNumber("")
       displayInfo(`Added ${newPerson.name}`)
     })
+    .catch(error => {
+      console.log('error:', error)
+      displayError(`Failed to add ${newName}`)
+    })
   }
 
   const handleNameChange = (event) => {
@@ -162,7 +166,7 @@ const App = () => {
 
   const deleteName = (event) => {
     event.preventDefault()
-    const id = Number(event.target.id)
+    const id = event.target.id
     const name = event.target.name
     console.log('delete id, name:', id, name)
     const remove = window.confirm(`Delete ${name} ?`)
