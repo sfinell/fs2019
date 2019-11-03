@@ -147,8 +147,7 @@ const App = () => {
       displayInfo(`Added ${newPerson.name}`)
     })
     .catch(error => {
-      console.log('error:', error)
-      displayError(`Failed to add ${newName}`)
+      displayError(error.response.data.error)
     })
   }
 
