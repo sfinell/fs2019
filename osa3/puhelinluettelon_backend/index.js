@@ -48,9 +48,10 @@ app.get('/', (req, res) => {
 })
 
 app.get('/info', (request, response) => {
-    const entries = Number(persons.length)
-    const date = new Date()
-    response.send(`<div>Phonebook has info for ${entries} people</br></br>date ${date}</div>`)
+    Person.count().then(count => {
+        const date = new Date()
+        response.send(`<div>Phonebook has info for ${count} people</br></br>date ${date}</div>`)
+      });
   })
   
 app.get('/api/persons', (req, res) => {
@@ -59,7 +60,7 @@ app.get('/api/persons', (req, res) => {
     });
 })
 
-app.get('/api/persons/:id', (request, responsen, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id).then(person => {
     if (person) {
       response.json(person.toJSON())
