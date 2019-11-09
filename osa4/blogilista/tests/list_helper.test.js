@@ -42,6 +42,30 @@ const listWithSeveralBlogs = [
     url: 'http://not.me/',
     likes: 1,
     __v: 9
+  },
+  {
+    _id: '5a422aa71b54a676234d1800',
+    title: 'Just For Test 2',
+    author: 'Me Self',
+    url: 'http://me.self.fi/~meself',
+    likes: 0,
+    __v: 0
+  },
+  {
+    _id: '5a422aa71b54a676234d1801',
+    title: 'Just For Test 3',
+    author: 'Me Self',
+    url: 'http://me.self.fi/~meself',
+    likes: 0,
+    __v: 0
+  },
+  {
+    _id: '5a422aa71b54a676234d17f7',
+    title: 'Second Not so popular blog',
+    author: 'Not Me',
+    url: 'http://not.me/second',
+    likes: 0,
+    __v: 0
   }
 ]
 
@@ -72,5 +96,21 @@ describe('favorite blog', () => {
   test('when list has multiple blogs then favorite is blog with highest likes', () => {
     const result = listHelper.favoriteBlog(listWithSeveralBlogs)
     expect(result).toBe(listWithSeveralBlogs[1])
+  })
+})
+
+describe('most blogs', () => {
+  test('when list is empty then result is null', () => {
+    const result = listHelper.mostBlogs(emptyListWithNoBlogs)
+    expect(result).toBe(null)
+  })
+  test('when list has only one blog then blogger is that', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual({[listWithOneBlog[0].author]: 1})
+  })
+  test('when list has multiple blogs then return blogger with most blogs', () => {
+    const result = listHelper.mostBlogs(listWithSeveralBlogs)
+    console.log('result:', result)
+    expect(result).toEqual({'Me Self': 3})
   })
 })
