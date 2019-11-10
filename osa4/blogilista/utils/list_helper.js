@@ -44,6 +44,29 @@ const mostBlogs = (blogs) => {
   return mostBlogs
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return null
+//  const blogsByAuthor = loadsh.groupBy(blogs, 'author');
+//  console.log('blogsByAuthor:', blogsByAuthor)
+//  console.log('mapping:')
+
+  const mostLikes = loadsh.chain(blogs).groupBy('author')
+//  .map((value, key, collection) => {
+//      console.log('in map, value', value, ', key:', key) //, ', collection:', collection)
+//    return {[key]: loadsh.sumBy(value, 'likes')}
+//  })
+  .map((value, key, collection) => ({[key]: loadsh.sumBy(value, 'likes')}))
+//  .sortBy([(o) => {
+//    const jeps = -Object.values(o)[0]
+//    console.log('o:', o, ', values:', Object.values(o), ', jeps:', jeps)
+//    return -Object.values(o)[0]}])
+  .sortBy([(o) => -Object.values(o)[0]])
+  .head().value()
+
+//  console.log('mostLikes:', mostLikes)
+  return mostLikes
+}
+
 module.exports = {
-  dummy, totalLikes, favoriteBlog, mostBlogs
+  dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes
 }

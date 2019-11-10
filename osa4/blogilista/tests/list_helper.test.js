@@ -56,7 +56,7 @@ const listWithSeveralBlogs = [
     title: 'Just For Test 3',
     author: 'Me Self',
     url: 'http://me.self.fi/~meself',
-    likes: 0,
+    likes: 4,
     __v: 0
   },
   {
@@ -80,7 +80,7 @@ describe('total likes', () => {
   })
   test('when list has multiple blogs then likes are counted together', () => {
     const result = listHelper.totalLikes(listWithSeveralBlogs)
-    expect(result).toBe(13)
+    expect(result).toBe(17)
   })
 })
 
@@ -112,5 +112,21 @@ describe('most blogs', () => {
     const result = listHelper.mostBlogs(listWithSeveralBlogs)
     console.log('result:', result)
     expect(result).toEqual({'Me Self': 3})
+  })
+})
+
+describe('most likes', () => {
+  test('when list is empty then result is null', () => {
+    const result = listHelper.mostLikes(emptyListWithNoBlogs)
+    expect(result).toBe(null)
+  })
+  test('when list has only one blog then blogger is that', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual({[listWithOneBlog[0].author]: listWithOneBlog[0].likes})
+  })
+  test('when list has multiple blogs then return blogger with most likes', () => {
+    const result = listHelper.mostLikes(listWithSeveralBlogs)
+    console.log('result:', result)
+    expect(result).toEqual({'Me Self': 11})
   })
 })
